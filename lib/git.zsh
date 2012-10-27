@@ -73,9 +73,13 @@ git_prompt_own_status() {
   INDEX=$(git status --porcelain 2> /dev/null)
   INDEX_FULL=$(git status --porcelain -b)
   STATUS=""
-  BEHIND=$(echo "$INDEX_FULL" | grep -oP "(?<=behind )\d+");
+  BEHIND=$(echo "$INDEX_FULL" | grep --color=never -oP "(?<=behind )\d+");
+  AHEAD=$(echo "$INDEX_FULL" | grep --color=never -oP "(?<=ahead )\d+");
   if $(echo "$INDEX_FULL" | grep 'behind' &> /dev/null); then
-    STATUS="$STATUS↓$BEHIND"
+    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_BEHIND↓$BEHIND"
+  fi
+  if $(echo "$INDEX_FULL" | grep 'ahead' &> /dev/null); then
+    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_AHEAD↑$AHEAD"
   fi
   if $(echo "$INDEX" | grep '^?? ' &> /dev/null); then
     STATUS="$ZSH_THEME_GIT_PROMPT_UNTRACKED$STATUS"
