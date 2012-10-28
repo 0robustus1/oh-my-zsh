@@ -15,14 +15,19 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}%B%{$fg[yellow]%})%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
 ZSH_THEME_GIT_PROMPT_AHEAD="%B$fg[white]%}"
 ZSH_THEME_GIT_PROMPT_BEHIND="%B$fg[white]%}"
-ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
+ZSH_THEME_GIT_PROMPT_STAGED="%B%{$fg[green]%}●"
+ZSH_THEME_GIT_PROMPT_UNSTAGED="%B%{$fg[blue]%}✚"
+ZSH_THEME_GIT_PROMPT_UNTRACKED="%B%{$fg[white]%}✚"
+ZSH_THEME_GIT_PROMPT_UNMERGED="%B%{$fg[magenta]%}✖"
+ZSH_THEME_GIT_PROMPT_INTERNAL_DELIMITER="|"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
 
 #Customized git status, oh-my-zsh currently does not allow render dirty status before branch
 git_custom_status() {
   local cb=$(current_branch)
   if [ -n "$cb" ]; then
-    echo "$ZSH_THEME_GIT_PROMPT_PREFIX$(current_branch)|$(git_prompt_own_status)$ZSH_THEME_GIT_PROMPT_SUFFIX"
+    echo "$ZSH_THEME_GIT_PROMPT_PREFIX$(current_branch)$(git_prompt_own_status)$ZSH_THEME_GIT_PROMPT_SUFFIX%(1l.
+.)"
   fi
 }
 
