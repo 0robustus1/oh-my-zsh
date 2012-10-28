@@ -76,39 +76,55 @@ git_prompt_own_status() {
   COMMITS=""
   BEHIND=$(echo "$INDEX_FULL" | grep --color=never -oP "(?<=behind )\d+");
   AHEAD=$(echo "$INDEX_FULL" | grep --color=never -oP "(?<=ahead )\d+");
+  local -i STAGED; local -i UNSTAGED; local -i UNTRACKED; local -i UNMERGED;
+  STAGED=0; UNSTAGED=0; UNTRACKED=0; UNMERGED=0;
+
   if $(echo "$INDEX_FULL" | grep 'behind' &> /dev/null); then
     COMMITS="$COMMITS$ZSH_THEME_GIT_PROMPT_BEHIND↓$BEHIND"
   fi
   if $(echo "$INDEX_FULL" | grep 'ahead' &> /dev/null); then
     COMMITS="$COMMITS$ZSH_THEME_GIT_PROMPT_AHEAD↑$AHEAD"
   fi
+
   if $(echo "$INDEX" | grep '^?? ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_UNTRACKED$STATUS"
+    UNTRACKED=$UNTRACKED+$(echo "$INDEX" | grep '^?? ' | wc -l | grep --color=never -oP "\d+")
   fi
   if $(echo "$INDEX" | grep '^A  ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_ADDED$STATUS"
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^A  ' | wc -l | grep --color=never -oP "\d+") 
   elif $(echo "$INDEX" | grep '^M  ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_ADDED$STATUS"
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^M  ' | wc -l | grep --color=never -oP "\d+")
   fi
   if $(echo "$INDEX" | grep '^ M ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
+    UNSTAGED=$UNSTAGED+$(echo "$INDEX" | grep '^ M ' | wc -l | grep --color=never -oP "\d+")
   elif $(echo "$INDEX" | grep '^AM ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  elif $(echo "$INDEX" | grep '^ T ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^AM ' | wc -l | grep --color=never -oP "\d+")
+  # git 1.8.0 doesn't know " T"
+  #elif $(echo "$INDEX" | grep '^ T ' &> /dev/null); then
+  #  STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
   fi
   if $(echo "$INDEX" | grep '^R  ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_RENAMED$STATUS"
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^R  ' | wc -l | grep --color=never -oP "\d+")
   fi
   if $(echo "$INDEX" | grep '^ D ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
+    UNSTAGED=$UNSTAGED+$(echo "$INDEX" | grep '^ D ' | wc -l | grep --color=never -oP "\d+")
   elif $(echo "$INDEX" | grep '^AD ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^AD ' | wc -l | grep --color=never -oP "\d+")
   fi
   if $(echo "$INDEX" | grep '^UU ' &> /dev/null); then
-    STATUS="$ZSH_THEME_GIT_PROMPT_UNMERGED$STATUS"
+    UMERGED=$UNMERGED+$(echo "$INDEX" | grep '^UU ' | wc -l | grep --color=never -oP "\d+")
   fi
-
+  if [[ ($UNMERGED -gt 0) ]]; then;
+    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNMERGED$UNMERGED"
+  fi
+  if [[ ($STAGED -gt 0) ]]; then;
+    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_STAGED$STAGED"
+  fi
+  if [[ ($UNSTAGED -gt 0) ]]; then;
+    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNSTAGED$UNSTAGED"
+  fi
+  if [[ ($UNTRACKED -gt 0) ]]; then;
+    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNTRACKED$UNTRACKED"
+  fi
   if [[ (-n  "$COMMITS" && -n "$STATUS") ]]; then
     COMMITS="$COMMITS$ZSH_THEME_GIT_PROMPT_INTERNAL_DELIMITER" 
   fi
