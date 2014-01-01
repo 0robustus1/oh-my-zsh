@@ -7,6 +7,10 @@ _brew_all_formulae() {
   formulae=(`brew search`)
 }
 
+_brew_upgradeable_formulae() {
+  formulae=(`brew outdated`)
+}
+
 _brew_installed_formulae() {
   installed_formulae=(`brew list`)
 }
@@ -80,4 +84,7 @@ case "$words[1]" in
   reinstall|remove|rm|uninstall|unlink|cleanup|link|ln)
     _brew_installed_formulae
     _wanted installed_formulae expl 'installed formulae' compadd -a installed_formulae ;;
+  upgrade)
+    _brew_upgradeable_formulae
+    _wanted formulae expl 'upgradeable formulae' compadd -a formulae ;;
 esac
