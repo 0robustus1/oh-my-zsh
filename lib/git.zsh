@@ -136,7 +136,7 @@ git_prompt_own_status() {
   if $(echo "$INDEX" | grep '^?? ' &> /dev/null); then
     UNTRACKED=$UNTRACKED+$(echo "$INDEX" | grep '^?? ' | wc -l | grep --color=never -oP "\d+")
   fi
-  if $(echo "$INDEX" | grep '^A  ' &> /dev/null); then
+  if $(echo "$INDEX" | grep '^A ' &> /dev/null); then
     STAGED=$STAGED+$(echo "$INDEX" | grep '^A  ' | wc -l | grep --color=never -oP "\d+") 
   elif $(echo "$INDEX" | grep '^M  ' &> /dev/null); then
     STAGED=$STAGED+$(echo "$INDEX" | grep '^M  ' | wc -l | grep --color=never -oP "\d+")
