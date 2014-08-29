@@ -45,7 +45,9 @@ function _plugin__start_agent()
   zstyle -a :omz:plugins:ssh-agent identities identities
   echo starting ssh-agent...
 
-  /usr/bin/ssh-add $HOME/.ssh/${^identities}
+  # Does not seems to work on my OS X Lion 10.7.5 in conjunction with my tmux
+  # setup.
+  # /usr/bin/ssh-add $HOME/.ssh/${^identities}
 }
 
 # Get the filename to store/lookup the environment from
