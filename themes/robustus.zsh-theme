@@ -24,10 +24,13 @@ ZSH_THEME_GIT_PROMPT_CLEAN=""
 
 #Customized git status, oh-my-zsh currently does not allow render dirty status before branch
 git_custom_status() {
-  local cb=$(current_branch)
-  if [ -n "$cb" ]; then
-    echo "$ZSH_THEME_GIT_PROMPT_PREFIX$(current_branch)$(git_prompt_own_status)$ZSH_THEME_GIT_PROMPT_SUFFIX%(1l.
+  local is_git=`git rev-parse --is-inside-work-tree 2> /dev/null`;
+  if [[ "$is_git" == "true" ]]; then
+    local cb=$(current_branch)
+    if [[ -n "$cb" ]]; then
+      echo "$ZSH_THEME_GIT_PROMPT_PREFIX$(current_branch)$(git_prompt_own_status)$ZSH_THEME_GIT_PROMPT_SUFFIX%(1l.
 .)"
+    fi
   fi
 }
 
