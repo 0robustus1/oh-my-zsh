@@ -156,8 +156,8 @@ git_prompt_own_status() {
   INDEX_FULL=$(git status --porcelain -b)
   STATUS=""
   COMMITS=""
-  BEHIND=$(echo "$INDEX_FULL" | grep --color=never -oP "(?<=behind )\d+");
-  AHEAD=$(echo "$INDEX_FULL" | grep --color=never -oP "(?<=ahead )\d+");
+  BEHIND=$(echo "$INDEX_FULL" | grep --color=never -oE "behind [[:digit:]]+" | grep -oE "[[:digit:]]+");
+  AHEAD=$(echo "$INDEX_FULL" | grep --color=never -oE "ahead [[:digit:]]+" | grep -oE "[[:digit:]]+");
   local -i STAGED; local -i UNSTAGED; local -i UNTRACKED; local -i UNMERGED;
   STAGED=0; UNSTAGED=0; UNTRACKED=0; UNMERGED=0;
 
@@ -169,34 +169,34 @@ git_prompt_own_status() {
   fi
 
   if $(echo "$INDEX" | grep '^?? ' &> /dev/null); then
-    UNTRACKED=$UNTRACKED+$(echo "$INDEX" | grep '^?? ' | wc -l | grep --color=never -oP "\d+")
+    UNTRACKED=$UNTRACKED+$(echo "$INDEX" | grep '^?? ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   fi
   if $(echo "$INDEX" | grep '^A ' &> /dev/null); then
-    STAGED=$STAGED+$(echo "$INDEX" | grep '^A  ' | wc -l | grep --color=never -oP "\d+") 
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^A  ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   elif $(echo "$INDEX" | grep '^M  ' &> /dev/null); then
-    STAGED=$STAGED+$(echo "$INDEX" | grep '^M  ' | wc -l | grep --color=never -oP "\d+")
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^M  ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   elif $(echo "$INDEX" | grep '^MM ' &> /dev/null); then
-    STAGED=$STAGED+$(echo "$INDEX" | grep '^MM ' | wc -l | grep --color=never -oP "\d+")
-    UNSTAGED=$UNSTAGED+$(echo "$INDEX" | grep '^MM ' | wc -l | grep --color=never -oP "\d+")
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^MM ' | wc -l | grep --color=never -oE "[[:digit:]]+")
+    UNSTAGED=$UNSTAGED+$(echo "$INDEX" | grep '^MM ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   fi
   if $(echo "$INDEX" | grep '^ M ' &> /dev/null); then
-    UNSTAGED=$UNSTAGED+$(echo "$INDEX" | grep '^ M ' | wc -l | grep --color=never -oP "\d+")
+    UNSTAGED=$UNSTAGED+$(echo "$INDEX" | grep '^ M ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   elif $(echo "$INDEX" | grep '^AM ' &> /dev/null); then
-    STAGED=$STAGED+$(echo "$INDEX" | grep '^AM ' | wc -l | grep --color=never -oP "\d+")
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^AM ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   # git 1.8.0 doesn't know " T"
   #elif $(echo "$INDEX" | grep '^ T ' &> /dev/null); then
   #  STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
   fi
   if $(echo "$INDEX" | grep '^R  ' &> /dev/null); then
-    STAGED=$STAGED+$(echo "$INDEX" | grep '^R  ' | wc -l | grep --color=never -oP "\d+")
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^R  ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   fi
   if $(echo "$INDEX" | grep '^ D ' &> /dev/null); then
-    UNSTAGED=$UNSTAGED+$(echo "$INDEX" | grep '^ D ' | wc -l | grep --color=never -oP "\d+")
+    UNSTAGED=$UNSTAGED+$(echo "$INDEX" | grep '^ D ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   elif $(echo "$INDEX" | grep '^AD ' &> /dev/null); then
-    STAGED=$STAGED+$(echo "$INDEX" | grep '^AD ' | wc -l | grep --color=never -oP "\d+")
+    STAGED=$STAGED+$(echo "$INDEX" | grep '^AD ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   fi
   if $(echo "$INDEX" | grep '^UU ' &> /dev/null); then
-    UMERGED=$UNMERGED+$(echo "$INDEX" | grep '^UU ' | wc -l | grep --color=never -oP "\d+")
+    UMERGED=$UNMERGED+$(echo "$INDEX" | grep '^UU ' | wc -l | grep --color=never -oE "[[:digit:]]+")
   fi
   if [[ ($UNMERGED -gt 0) ]]; then;
     STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNMERGED$UNMERGED"
